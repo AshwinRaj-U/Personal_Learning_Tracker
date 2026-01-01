@@ -24,6 +24,7 @@ if "start_ts" not in st.session_state:
 def start_session():
     st.session_state.session_active = True
     st.session_state.start_ts = time.time()
+    st.info("✅ Study session started")
 
 def stop_session():
     end_ts = time.time()
@@ -54,26 +55,27 @@ def stop_session():
 
     st.session_state.session_active = False
     st.session_state.start_ts = None
-    st.success(f"Session saved: {today} (+{duration_minutes} min)")
+    st.success(f"📘 Session saved: {today} (+{duration_minutes} min)")
+    st.info(f"⏱ Study time: {duration_minutes} minutes")
 
 # --- UI ---
 st.title("📘 Yearly Learning Tracker")
 
-# Always show dashboard first
+# Dashboard
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 if not df.empty:
     df["session_date"] = pd.to_datetime(df["session_date"]).dt.date.astype(str)
     df["hours"] = df["duration_minutes"] / 60.0
     fig = px.line(df, x="session_date", y="hours", title="Daily Learning Hours")
-    fig.update_xaxes(title="Date",type="category")
+    fig.update_xaxes(title="Date", type="category")
     fig.update_yaxes(range=[0, df["hours"].max() + 1])
     st.plotly_chart(fig, use_container_width=True)
 
     total_days = (dt.date.today() - dt.date(dt.date.today().year, 1, 1)).days + 1
     learned_days = (df["duration_minutes"] > 0).sum()
     percent = round((learned_days / total_days) * 100, 2)
-    st.metric("Consistency %", f"{percent}%")   
+    st.metric("Consistency %", f"{percent}%")
 
 # Buttons
 col1, col2 = st.columns(2)
@@ -83,13 +85,3 @@ with col1:
 with col2:
     if st.button("Stop session"):
         stop_session()
-
-# Timer display (auto-refresh)
-if st.session_state.session_active:
-    timer_placeholder = st.empty()
-    while st.session_state.session_active:
-        elapsed = int(time.time() - st.session_state.start_ts)
-        mins, secs = divmod(elapsed, 60)
-        timer_placeholder.info(f"⏱ Running time: {mins:02d}:{secs:02d}")
-        time.sleep(1)
-        st.experimental_rerun()
