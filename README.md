@@ -26,11 +26,11 @@ This project integrates with **Google Sheets** as a backend to store session dat
 ```
 personal_learning_tracker/
 │
-├── app.py              # Main Streamlit app
-├── requirements.txt    # Python dependencies
-└── README.md           # Project documentation
-```
-
+├── app.py               # Main Streamlit app
+├── requirements.txt     # Python dependencies
+├── README.md            # Project documentation
+└── .streamlit/
+    └── secrets.toml     # Secrets configuration (not committed to public repos)
 ---
 
 ## ⚙️ Setup Instructions
