@@ -75,7 +75,14 @@ if not df.empty:
     total_days = (dt.date.today() - dt.date(dt.date.today().year, 1, 1)).days + 1
     learned_days = (df["duration_minutes"] > 0).sum()
     percent = round((learned_days / total_days) * 100, 2)
-    st.metric("Consistency %", f"{percent}%")
+    average_hours = df["hours"].mean()
+  
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Consistency %", f"{percent}%")
+    with col2:
+        st.metric("Average Hours", f"{average_hours:.2f}")
+
 
 # Buttons
 col1, col2 = st.columns(2)
